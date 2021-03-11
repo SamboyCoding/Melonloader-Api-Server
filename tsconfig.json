@@ -1,0 +1,22 @@
+{
+   "compilerOptions": {
+      "lib": [
+         "esnext"
+      ],
+      "target": "esnext",
+      "module": "none",
+      "moduleResolution": "node",
+      "outDir": "./build",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "typeRoots": [
+         "./src/typings",
+         "./node_modules/@types"
+      ]
+   },
+   "files": [
+      "src/**"
+   ]
+}
