@@ -7,9 +7,7 @@ const apiV1GameRouter = Router();
 
 apiV1GameRouter.get('/', async (req, res) => {
     const games = await Game.find();
-    res.json(games/*.map(g => {
-        return {gameSlug: g.gameSlug, gameName: g.gameName}
-    })*/);
+    res.json(games);
 });
 
 apiV1GameRouter.get('/:gameSlug', async (req, res) => {
@@ -48,6 +46,8 @@ apiV1GameRouter.delete("/:gameSlug/mapSha512", async (req, res) => {
     game.mappingFileSHA512 = null;
     await game.save();
 
+    await MelonApi.cloudflare.purgeCache();
+
     return res.status(204).send();
 });
 
@@ -73,6 +73,8 @@ apiV1GameRouter.patch("/:gameSlug/mappingUrl", async (req, res) => {
 
         game.mappingUrl = newUrl ? newUrl : null;
         await game.save();
+
+        await MelonApi.cloudflare.purgeCache();
     }
 
     return res.status(204).send();
@@ -100,6 +102,8 @@ apiV1GameRouter.patch("/:gameSlug/obfuscationRegex", async (req, res) => {
 
         game.obfuscationRegex = newRegex ? newRegex : null;
         await game.save();
+
+        await MelonApi.cloudflare.purgeCache();
     }
 
     return res.status(204).send();
@@ -127,6 +131,8 @@ apiV1GameRouter.patch("/:gameSlug/unhollowerVersion", async (req, res) => {
 
         game.forceUnhollowerVersion = newVersion ? newVersion : null;
         await game.save();
+
+        await MelonApi.cloudflare.purgeCache();
     }
 
     return res.status(204).send();
@@ -154,6 +160,8 @@ apiV1GameRouter.patch("/:gameSlug/dumperVersion", async (req, res) => {
 
         game.forceCpp2IlVersion = newVersion ? newVersion : null;
         await game.save();
+
+        await MelonApi.cloudflare.purgeCache();
     }
 
     return res.status(204).send();

@@ -5,13 +5,21 @@ import apiV1Router from './routes/api/v1';
 import {config} from 'dotenv';
 import AnalyticsEvent from './nonDbModels/AnalyticsEvent';
 import moment = require('moment');
+import CloudflareHandler from "./CloudflareHandler";
 
 export default class MelonApi {
     public static orm: Connection;
     public static expressServer: Application;
+    public static cloudflare: CloudflareHandler;
     public static analyticsEvents: AnalyticsEvent[] = [];
 
     public static async init() {
+        MelonApi.cloudflare = new CloudflareHandler();
+        if(!(await MelonApi.cloudflare.Init())) {
+            console.error("[Init] Failed to initialize Cloudflare handler. Aborting start.");
+            return;
+        }
+
         console.log('[ORM] Connecting...');
         MelonApi.orm = await createConnection();
         console.log('[ORM] Connected.');
@@ -27,6 +35,8 @@ export default class MelonApi {
         });
 
         setInterval(MelonApi.CleanupAnalyticsEvents, 1000 * 60);
+
+        console.log('[Init] Ready.');
     }
 
     public static CleanupAnalyticsEvents() {
@@ -44,8 +54,6 @@ config();
 
 console.log(`[Init] Account creation key is ${process.env.ACCOUNT_CREATION_KEY}`);
 
-MelonApi.init().then(() => {
-    console.log('[Init] Ready.');
-}).catch(e => {
+MelonApi.init().catch(e => {
     console.error('[Init] Failed!', e);
 });
