@@ -42,7 +42,7 @@ export class Game extends BaseEntity {
         console.log(`[Game] Refreshing mapping file SHA512 from ${this.mappingUrl}...`);
 
         try {
-            const res = await axios.get(this.mappingUrl);
+            const res = await axios.get(this.mappingUrl, {  responseType: 'arraybuffer' });
 
             this.mappingFileSHA512 = await hasha.async(res.data, {algorithm: 'sha512'});
             await this.save();
