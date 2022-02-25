@@ -20,7 +20,7 @@ apiV1GameRouter.get('/:gameSlug', async (req, res) => {
         return;
     }
 
-    if (!game.mappingFileSHA512) {
+    if (!game.mappingFileSHA512 && game.mappingUrl) {
         await game.refreshHash();
         console.log(`[Game] Recalculated SHA512 for ${game.gameName}`);
     }
