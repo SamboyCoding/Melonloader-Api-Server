@@ -17,7 +17,7 @@ apiV1Router.use(async (req: Request, res, next) => {
     const sessId = req.header('x-session-id');
 
     if(sessId) {
-        req.session = await Session.findOne(sessId);
+        req.session = await Session.findOneBy({sessionId: sessId});
     }
 
     next();

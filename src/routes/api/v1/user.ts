@@ -9,7 +9,7 @@ apiV1UserRouter.post('/check-creds', async (req, res) => {
     if (!req.body.username || !req.body.password)
         return res.status(400).json({error: 'Credentials not specified'});
 
-    const user = await User.findOne({where: {username: req.body.username}})
+    const user = await User.findOneBy({username: req.body.username})
 
     if(!user)
         return res.status(403).json({error: "These credentials do not match our records"});
@@ -28,7 +28,7 @@ apiV1UserRouter.post("/check-session", async (req, res) => {
     if(!req.body.sessionId)
         return res.status(400).json({error: "SessionId not specified"});
 
-    const session = await Session.findOne(req.body.sessionId);
+    const session = await Session.findOneBy({sessionId: req.body.sessionId});
 
     if(!session)
         return res.status(401).json({error: "SessionId is invalid"});

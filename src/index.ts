@@ -1,14 +1,17 @@
 import 'reflect-metadata';
-import {Connection, createConnection} from 'typeorm';
+import {DataSource} from 'typeorm';
 import express, {Application, static as eStatic} from 'express';
 import apiV1Router from './routes/api/v1';
 import {config} from 'dotenv';
 import AnalyticsEvent from './nonDbModels/AnalyticsEvent';
 import moment = require('moment');
 import CloudflareHandler from "./CloudflareHandler";
+import {Game} from "./entity/Game";
+import Session from "./entity/Session";
+import User from "./entity/User";
 
 export default class MelonApi {
-    public static orm: Connection;
+    public static orm: DataSource;
     public static expressServer: Application;
     public static cloudflare: CloudflareHandler;
     public static analyticsEvents: AnalyticsEvent[] = [];
@@ -21,7 +24,20 @@ export default class MelonApi {
         }
 
         console.log('[ORM] Connecting...');
-        MelonApi.orm = await createConnection();
+        MelonApi.orm = new DataSource({
+            type: process.env.DB_TYPE as any,
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT),
+            username: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            database: process.env.DB_NAME,
+            synchronize: true,
+            logging: false,
+            entities: [Game, Session, User],
+            subscribers: [],
+            migrations: [],
+        })
+        await MelonApi.orm.initialize();
         console.log('[ORM] Connected.');
 
         MelonApi.expressServer = express();

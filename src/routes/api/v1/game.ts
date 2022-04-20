@@ -11,7 +11,7 @@ apiV1GameRouter.get('/', async (req, res) => {
 });
 
 apiV1GameRouter.get('/:gameSlug', async (req, res) => {
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if (!game) {
         MelonApi.analyticsEvents.push(new AnalyticsEvent(req.params.gameSlug, false));
@@ -37,7 +37,7 @@ apiV1GameRouter.delete("/:gameSlug/mapSha512", async (req, res) => {
     if(req.session.user.privilegeLevel === 'editor')
         return res.status(403).json({error: "You do not have permission to purge SHA512 hashes."});
 
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if(!game)
         return res.status(404).json({error: `No game found for game slug: ${req.params.gameSlug}`});
@@ -58,7 +58,7 @@ apiV1GameRouter.patch("/:gameSlug/mappingUrl", async (req, res) => {
     if(req.session.user.privilegeLevel === 'editor')
         return res.status(403).json({error: "You do not have permission to edit mapping URLs."});
 
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if(!game)
         return res.status(404).json({error: `No game found for game slug: ${req.params.gameSlug}`});
@@ -87,7 +87,7 @@ apiV1GameRouter.patch("/:gameSlug/obfuscationRegex", async (req, res) => {
     if(req.session.user.privilegeLevel === 'editor')
         return res.status(403).json({error: "You do not have permission to edit mapping URLs."});
 
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if(!game)
         return res.status(404).json({error: `No game found for game slug: ${req.params.gameSlug}`});
@@ -116,7 +116,7 @@ apiV1GameRouter.patch("/:gameSlug/unhollowerVersion", async (req, res) => {
     if(req.session.user.privilegeLevel === 'editor')
         return res.status(403).json({error: "You do not have permission to edit unhollower versions."});
 
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if(!game)
         return res.status(404).json({error: `No game found for game slug: ${req.params.gameSlug}`});
@@ -145,7 +145,7 @@ apiV1GameRouter.patch("/:gameSlug/dumperVersion", async (req, res) => {
     if(req.session.user.privilegeLevel === 'editor')
         return res.status(403).json({error: "You do not have permission to edit dumper versions."});
 
-    const game = await Game.findOne(req.params.gameSlug);
+    const game = await Game.findOneBy({gameSlug: req.params.gameSlug});
 
     if(!game)
         return res.status(404).json({error: `No game found for game slug: ${req.params.gameSlug}`});
