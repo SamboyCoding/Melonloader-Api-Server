@@ -9,6 +9,9 @@ import CloudflareHandler from "./CloudflareHandler";
 import {Game} from "./entity/Game";
 import Session from "./entity/Session";
 import User from "./entity/User";
+import RuntimeConfiguration from "./entity/RuntimeConfiguration";
+import Tool from "./entity/Tool";
+import ToolVersion from "./entity/ToolVersion";
 
 export default class MelonApi {
     public static orm: DataSource;
@@ -33,12 +36,16 @@ export default class MelonApi {
             database: process.env.DB_NAME,
             synchronize: true,
             logging: false,
-            entities: [Game, Session, User],
+            entities: [Game, Session, User, RuntimeConfiguration, Tool, ToolVersion],
             subscribers: [],
             migrations: [],
         })
         await MelonApi.orm.initialize();
         console.log('[ORM] Connected.');
+
+        console.log('[ORM] Ensuring legacy tools are in the database...');
+        await Tool.InitLegacyTools();
+        console.log('[ORM] Done.');
 
         MelonApi.expressServer = express();
 

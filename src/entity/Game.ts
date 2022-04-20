@@ -1,7 +1,9 @@
-import {BaseEntity, Column, Entity, PrimaryColumn} from 'typeorm';
+import {BaseEntity, Column, Entity, ManyToMany, PrimaryColumn} from 'typeorm';
 import axios from 'axios';
 import hasha from 'hasha';
+import RuntimeConfiguration from "./RuntimeConfiguration";
 
+// noinspection JSUnusedLocalSymbols
 @Entity()
 export class Game extends BaseEntity {
 
@@ -35,6 +37,9 @@ export class Game extends BaseEntity {
         nullable: true
     })
     public obfuscationRegex?: string;
+
+    @ManyToMany(type => RuntimeConfiguration, runtimeConfiguration => runtimeConfiguration.games, {eager: true})
+    public runtimeConfigurations!: RuntimeConfiguration[];
 
     public async refreshHash() {
         if(this.mappingUrl === null) return;

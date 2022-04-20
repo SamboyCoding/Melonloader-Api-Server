@@ -1,6 +1,7 @@
 import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import User from './User';
 
+// noinspection JSUnusedLocalSymbols
 @Entity()
 export default class Session extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
