@@ -2,6 +2,8 @@ import {BaseEntity, Column, Entity, ManyToMany, PrimaryColumn} from 'typeorm';
 import axios from 'axios';
 import hasha from 'hasha';
 import RuntimeConfiguration from "./RuntimeConfiguration";
+import semver from "semver/preload";
+import {cmp, lt} from "semver";
 
 // noinspection JSUnusedLocalSymbols
 @Entity()
@@ -41,7 +43,7 @@ export class Game extends BaseEntity {
     @ManyToMany(type => RuntimeConfiguration, runtimeConfiguration => runtimeConfiguration.games, {eager: true})
     public runtimeConfigurations!: RuntimeConfiguration[];
 
-    public async refreshHash() {
+    public async refreshHash(): Promise<void> {
         if(this.mappingUrl === null) return;
 
         console.log(`[Game] Refreshing mapping file SHA512 from ${this.mappingUrl}...`);
@@ -56,5 +58,19 @@ export class Game extends BaseEntity {
         } catch(e) {
             console.error("[Game] Failed to refresh mapping hash: " + e.message);
         }
+    }
+
+    public resolveRuntimeConfigurationForVersion(version: string): RuntimeConfiguration | null {
+        //Sort configs by minimum version, descending
+        const sortedConfigs = this.runtimeConfigurations.sort((a, b) => a.semanticMinMlVersion.compare(b.semanticMinMlVersion)).reverse();
+
+        for(const runtimeConfiguration of sortedConfigs) {
+            //Return first config where min version is less than or equal to the version
+            if(lt(runtimeConfiguration.semanticMinMlVersion, version)) {
+                return runtimeConfiguration;
+            }
+        }
+
+        return null;
     }
 }
