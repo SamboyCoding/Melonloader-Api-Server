@@ -16,7 +16,7 @@
       "reflect-metadata": "^0.1.10",
       "tslib": "^2.4.0",
       "typeorm": "0.3.6",
-      "underscore": "^1.13.2"
+      "underscore": "^1.13.4"
    },
    "devDependencies": {
       "@types/bcryptjs": "^2.4.2",
